@@ -1,0 +1,13 @@
+{
+  "name": "output-style-mod",
+  "owner": {
+    "name": "crytropy"
+  },
+  "description": "輸入框下方顯示目前的 output style，並用 /style 切換",
+  "plugins": [
+    {
+      "name": "style",
+      "source": "./"
+    }
+  ]
+}

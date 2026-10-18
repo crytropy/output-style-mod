@@ -1,0 +1,10 @@
+{
+  "name": "style",
+  "displayName": "Output style 顯示與切換",
+  "version": "0.1.0",
+  "description": "輸入框下方顯示目前的 output style；/style 列出或切換 style。",
+  "author": {
+    "name": "crytropy"
+  },
+  "types": "./types/index.d.ts"
+}
