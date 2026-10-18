@@ -20,6 +20,22 @@ function world(on: On, outputStyle?: string) {
   mock.env(on, {})
 }
 
+test('a surface that attaches later gets the status line pinned again', async ($, on) => {
+  world(on, 'ELI5')
+  const pinned: (string | undefined)[] = []
+  on('ui.status', (_$, e) => {
+    pinned.push(e.text)
+    return { value: undefined }
+  })
+  on('session.attach', (_$, e) => ({ clientId: e.clientId }))
+  await $.session.start(START)
+  expect(pinned).toContain('ELI5')
+
+  pinned.length = 0
+  await $.session.attach({ surface: 'desktop', clientId: 'desktop-1' })
+  expect(pinned).toEqual(['ELI5'])
+})
+
 test('the hint line shows the current style on the right', async ($, on) => {
   world(on, 'ELI5')
   await $.session.start(START)

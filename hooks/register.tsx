@@ -117,12 +117,18 @@ export const register: Register = on => {
     return next(e)
   })
 
-  // Keep the shown name in step with what the engine really composes with.
+  // A surface that joins after session.start (the desktop app, a phone) missed
+  // the first pin: pin it again now that something draws.
+  on('session.attach', async ($, e, next) => {
+    $.ui.status(await read($, current))
+    return next(e)
+  })
+
+  // Keep the shown name in step with what the engine really composes with,
+  // and re-pin it each turn in case the surface dropped it.
   on('prompt.compose', async ($, e, next) => {
     const name = e.outputStyle?.name ?? DEFAULT
-    if ((await read($, current)) !== name) {
-      await show($, name)
-    }
+    await show($, name)
     return next(e)
   })
 
