@@ -92,10 +92,9 @@ async function switchStyle($: Engine, name: string): Promise<'command' | 'settin
   return 'settings'
 }
 
-/** Remembers the style and pins it as this plugin's status line under the prompt. */
+/** Remembers the style; the hint line reads it. */
 async function show($: Engine, name: string): Promise<void> {
   await update($, current, () => name)
-  $.ui.status(name)
 }
 
 export const register: Register = on => {
@@ -112,20 +111,11 @@ export const register: Register = on => {
       await show($, name)
     } catch {
       // no settings beneath (a test): keep what the state holds
-      $.ui.status(await read($, current))
     }
     return next(e)
   })
 
-  // A surface that joins after session.start (the desktop app, a phone) missed
-  // the first pin: pin it again now that something draws.
-  on('session.attach', async ($, e, next) => {
-    $.ui.status(await read($, current))
-    return next(e)
-  })
-
-  // Keep the shown name in step with what the engine really composes with,
-  // and re-pin it each turn in case the surface dropped it.
+  // Keep the shown name in step with what the engine really composes with.
   on('prompt.compose', async ($, e, next) => {
     const name = e.outputStyle?.name ?? DEFAULT
     await show($, name)

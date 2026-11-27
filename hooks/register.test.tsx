@@ -20,20 +20,24 @@ function world(on: On, outputStyle?: string) {
   mock.env(on, {})
 }
 
-test('a surface that attaches later gets the status line pinned again', async ($, on) => {
+test('no status line is pinned: the name shows only on the hint line', async ($, on) => {
   world(on, 'ELI5')
   const pinned: (string | undefined)[] = []
   on('ui.status', (_$, e) => {
     pinned.push(e.text)
     return { value: undefined }
   })
-  on('session.attach', (_$, e) => ({ clientId: e.clientId }))
+  on('prompt.compose', () => ({ sections: [] }))
   await $.session.start(START)
-  expect(pinned).toContain('ELI5')
-
-  pinned.length = 0
-  await $.session.attach({ surface: 'desktop', clientId: 'desktop-1' })
-  expect(pinned).toEqual(['ELI5'])
+  await $.prompt.compose({
+    model: 'claude-fable-5-1',
+    promptModel: 'claude-fable-5-1',
+    surfaces: ['terminal'],
+    tools: [],
+    traits: [],
+    outputStyle: { name: 'Learning', isKeepingCodingInstructions: true },
+  })
+  expect(pinned).toEqual([])
 })
 
 test('the hint line shows the current style on the right', async ($, on) => {
